@@ -1,1 +1,379 @@
+<!doctype html>
 
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Shannon Demon 10 Bet Game – Kid Mode</title>
+  <style>
+    :root{
+      --bg:#fff7f0; --bg2:#f0fbff; --text:#0f172a; --muted:#64748b; --card:#ffffff; --accent:#111827;
+      --green:#10b981; --red:#ef4444; --border:#e5e7eb; --purple:#8b5cf6; --blue:#3b82f6; --yellow:#f59e0b;
+      --jarA1:#ffedd5; --jarA2:#fdba74; --jarB1:#dcfce7; --jarB2:#86efac;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;height:100%;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,"Helvetica Neue",Arial}
+    body{background:radial-gradient(1200px 600px at 10% 0%, var(--bg), #fff), radial-gradient(1200px 600px at 100% 0%, var(--bg2), #fff); color:var(--text)}
+    .wrap{max-width:1024px;margin:0 auto;padding:22px}
+    h1{font-size:30px;margin:0 0 8px 0; display:flex; align-items:center; gap:10px}
+    h1 .badge{background:linear-gradient(135deg, var(--purple), var(--blue)); color:#fff; padding:6px 10px; border-radius:999px; font-size:12px; font-weight:800}
+    .grid{display:grid;gap:14px}
+    @media(min-width:860px){.grid.cols-2{grid-template-columns:1fr 1fr}}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:0 6px 20px rgba(0,0,0,.05);padding:14px}
+    .btn{appearance:none;border:0;border-radius:14px;padding:12px 16px;font-weight:800;cursor:pointer; transition:.15s transform}
+    .btn:active{transform:scale(.98)}
+    .btn.dark{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff}
+    .btn.play{background:linear-gradient(135deg,var(--yellow),#ff7a00); color:#111}
+    .btn.light{background:#fff;border:1px solid var(--border)}
+    .muted{color:var(--muted)}
+    .big{font-size:30px;font-weight:900}
+    .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    .ctl{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px}
+    .chip{background:#fff;border:1px solid var(--border);border-radius:999px;padding:6px 10px;font-weight:800;min-width:64px;text-align:center}
+    .label-emoji{font-size:20px}
+    input[type="number"], input[type="range"], .chip-in{width:100%}
+    input[type="number"], .chip-in{border:1px solid var(--border);border-radius:12px;padding:8px 10px;font-size:16px;font-weight:700}.jar{display:grid;grid-template-columns:auto 1fr; gap:14px; align-items:center}
+.jar-bubble{width:90px;height:90px;border-radius:50%;display:grid;place-items:center;color:#111;font-weight:900;font-size:20px}
+.jarA .jar-bubble{background:radial-gradient(90px 90px at 30% 30%, var(--jarA2), var(--jarA1));}
+.jarB .jar-bubble{background:radial-gradient(90px 90px at 30% 30%, var(--jarB2), var(--jarB1));}
+.jar h3{margin:0;font-size:16px; font-weight:900; letter-spacing:.2px}
+.spark{width:100%;height:84px;background:#fff;border-radius:12px;box-shadow:inset 0 1px 2px rgba(0,0,0,.06)}
+
+.coins{font-size:22px; line-height:1}
+.coins .dot{opacity:.35}
+
+details{background:#fff; border:1px solid var(--border); border-radius:14px; padding:12px}
+summary{cursor:pointer; font-weight:800}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:8px 10px}
+thead th{border-bottom:1px solid var(--border)}
+tbody tr+tr td{border-top:1px solid var(--border)}
+.pass{color:var(--green)} .fail{color:var(--red)}
+
+/* allocation bars */
+.alloc{margin-top:8px}
+.alloc-bar{width:100%;height:14px;border-radius:999px;overflow:hidden;background:#f1f5f9;display:flex}
+.seg-coin{background:linear-gradient(135deg,#fde047,#f59e0b)}
+.seg-cash{background:linear-gradient(135deg,#bbf7d0,#34d399)}
+.alloc-label{font-size:12px;color:var(--muted);margin-top:6px;font-weight:800}
+
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Shannon Game <span class="badge">Two Jars</span> 🫙🫙</h1>
+    <div class="muted" style="margin-bottom:12px">Jar A all in. Jar B splits money and keeps it steady. Same coin. Who grows?</div><!-- KID‑FRIENDLY KNOBS -->
+<div class="grid cols-2">
+  <div class="card">
+    <div class="ctl">
+      <div class="label-emoji">🎯</div>
+      <input id="rounds" type="range" min="1" max="1000" step="1" value="100" />
+      <div class="chip" id="roundsChip">100 flips</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ctl">
+      <div class="label-emoji">🏆</div>
+      <input id="rFactor" type="range" min="1.1" max="2" step="0.01" value="2" />
+      <div class="chip" id="rChip">win ×2.00 (100%)  lose ×0.50 (50%)</div>
+    </div>
+  </div>
+</div>
+
+<div class="card" style="margin-top:10px">
+  <div class="ctl">
+    <div class="label-emoji">💰</div>
+    <input id="fraction" type="range" min="0" max="1" step="0.01" value="0.5" />
+    <div class="chip" id="fChip">split 50/50</div>
+  </div>
+</div>
+
+<div class="row" style="margin-top:12px">
+  <button id="flipOnce" class="btn dark">Flip! 🎲</button>
+  <button id="runFull" class="btn play">Play ▶</button>
+  <button id="clear" class="btn light">Reset ⟳</button>
+  <button id="shuffle" class="btn light">Shuffle seed 🎲</button>
+  <div class="chip" id="edgeBadge">edge 0.00%/flip</div>
+</div>
+
+<div class="grid cols-2" style="margin-top:12px">
+  <div class="card jar jarA">
+    <div class="jar-bubble">$<span id="valA">100</span></div>
+    <div>
+      <h3>Jar A all in coin</h3>
+      <div class="alloc">
+        <div class="alloc-bar">
+          <div id="allocAcoin" class="seg-coin" style="width:100%"></div>
+          <div id="allocAcash" class="seg-cash" style="width:0%"></div>
+        </div>
+        <div id="allocAlabel" class="alloc-label">🪙 100%  |  💵 0%</div>
+      </div>
+      <svg id="sparkRisky" class="spark" style="margin-top:10px"></svg>
+    </div>
+  </div>
+  <div class="card jar jarB">
+    <div class="jar-bubble">$<span id="valB">100</span></div>
+    <div>
+      <h3>Jar B split and rebalance</h3>
+      <div class="alloc">
+        <div class="alloc-bar">
+          <div id="allocBcoin" class="seg-coin" style="width:50%"></div>
+          <div id="allocBcash" class="seg-cash" style="width:50%"></div>
+        </div>
+        <div id="allocBlabel" class="alloc-label">🪙 50%  |  💵 50%</div>
+      </div>
+      <svg id="sparkRebal" class="spark" style="margin-top:10px"></svg>
+    </div>
+  </div>
+</div>
+
+<div class="card" style="margin-top:12px">
+  <div class="row" style="justify-content:space-between; align-items:center">
+    <div class="coins" id="coins">⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜</div>
+    <div class="muted" id="rInfo" style="font-size:12px">win ×2.00 (100%)  |  lose ×0.50 (50%)</div>
+  </div>
+  <div class="row" style="margin-top:6px">
+    <div class="muted" id="legend" style="font-size:12px">Heads = 🟡 win ×2.00 (100%)  |  Tails = 🔵 lose ×0.50 (50%)</div>
+  </div>
+</div>
+
+<!-- PRO / TEACHER MODE -->
+<details style="margin-top:12px">
+  <summary>Details and math</summary>
+  <div class="muted" style="margin:8px 0 10px 0">When the coin wins the coin part grows by your win number. When it loses it shrinks by the lose number. Jar B always goes back to the same split which makes it buy a little after drops and sell a little after pops. That tiny habit adds up.</div>
+  <div id="edge" class="muted" style="margin:8px 0 14px 0"></div>
+
+  <div class="card" style="overflow:auto; margin-top:8px">
+    <table>
+      <thead>
+        <tr>
+          <th>Flip</th><th>Coin</th><th>Risky x</th><th>Risky price</th><th>Jar A</th><th>Jar B</th>
+        </tr>
+      </thead>
+      <tbody id="rows">
+        <tr><td class="muted">0</td><td class="muted">.</td><td class="muted">.</td><td>$100.00</td><td>$100.00</td><td>$100.00</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <div style="font-weight:800;margin-bottom:6px">Self tests</div>
+    <ul id="tests" style="margin:6px 0 0 18px"></ul>
+  </div>
+</details>
+
+  </div>  <script>
+    // PRNG
+    function mulberry32(seed){let t = (seed>>>0) + 0x6D2B79F5;return function(){t|=0; t = (t + 0x6D2B79F5)|0; let r = Math.imul(t ^ (t>>>15), 1|t); r ^= r + Math.imul(r ^ (r>>>7), 61|r); return ((r ^ (r>>>14))>>>0) / 4294967296;}};
+    function fmt(n){return n.toLocaleString(undefined,{maximumFractionDigits:0})}
+
+    const state = { rounds:100, r:2.0, f:0.5, seed:12345, rng: null, history: [], auto:false, speed:450 };
+
+    // DOM
+    const elRounds = document.getElementById('rounds');
+    const elR = document.getElementById('rFactor');
+    const elF = document.getElementById('fraction');
+    const btnFlip = document.getElementById('flipOnce');
+    const btnRun = document.getElementById('runFull');
+    const btnClear = document.getElementById('clear');
+    const btnShuffle = document.getElementById('shuffle');
+
+    const valA = document.getElementById('valA');
+    const valB = document.getElementById('valB');
+    const edgeBadge = document.getElementById('edgeBadge');
+
+    const rChip = document.getElementById('rChip');
+    const fChip = document.getElementById('fChip');
+    const roundsChip = document.getElementById('roundsChip');
+
+    const rows = document.getElementById('rows');
+    const edgeBox = document.getElementById('edge');
+    const coins = document.getElementById('coins');
+    const rInfo = document.getElementById('rInfo');
+
+    const sRisky = document.getElementById('sparkRisky');
+    const sRebal = document.getElementById('sparkRebal');
+
+    // allocation DOM
+    const allocAcoin = document.getElementById('allocAcoin');
+    const allocAcash = document.getElementById('allocAcash');
+    const allocAlabel = document.getElementById('allocAlabel');
+    const allocBcoin = document.getElementById('allocBcoin');
+    const allocBcash = document.getElementById('allocBcash');
+    const allocBlabel = document.getElementById('allocBlabel');
+
+    let timer = null;
+
+    function resetRng(){ state.rng = mulberry32(Number(state.seed)||0); }
+
+    function flipOnce(){
+      if(state.history.length >= state.rounds) return;
+      const u = state.rng();
+      const coin = u < 0.5 ? 'H' : 'T';
+      const mult = coin === 'H' ? state.r : 1/state.r;
+      const last = state.history.length === 0 ? 100 : state.history[state.history.length-1].price;
+      const price = last * mult;
+      state.history.push({step: state.history.length+1, coin, mult, price});
+      render();
+    }
+
+    function runFull(){
+      if(state.auto){
+        stopAuto();
+        return;
+      }
+      // resume from current state if paused mid run
+      if(state.history.length >= state.rounds){
+        // finished previously, start fresh
+        state.history = [];
+        resetRng();
+      }
+      startAuto();
+    }
+      state.history = [];
+      resetRng();
+      render();
+      startAuto();
+    }
+
+    function simulate(){
+      // if auto finished all flips, stop timer just in case
+      if(state.auto && state.history.length >= state.rounds){ stopAuto(); }
+      const flips = state.history.map(h=>h.coin);
+      const start=100;
+      // Jar A all in risky
+      const risky=[100]; let p=100; for(const c of flips){ p *= c==='H'?state.r:1/state.r; risky.push(p); }
+      const jarA = risky.map(x=> x/100*start);
+      // Jar B fixed fraction rebalance
+      const jarB=[start]; let w=start; for(const c of flips){ const g=(1-state.f) + state.f*(c==='H'?state.r:1/state.r); w*=g; jarB.push(w); }
+      return { jarA, jarB };
+    }
+
+    function startAuto(){
+      state.auto = true;
+      btnRun.textContent = 'Pause ⏸';
+      if(timer) clearInterval(timer);
+      timer = setInterval(()=>{
+        if(state.history.length >= state.rounds){
+          stopAuto();
+          return;
+        }
+        flipOnce();
+      }, state.speed);
+    }
+
+    function stopAuto(){
+      if(timer){ clearInterval(timer); timer = null; }
+      state.auto = false;
+      btnRun.textContent = 'Play ▶';
+    }
+
+    function drawSpark(svg, data){
+      while(svg.firstChild) svg.removeChild(svg.firstChild);
+      if(!data || data.length===0) return;
+      const width = svg.clientWidth || 320; const height = svg.clientHeight || 84;
+      const pad=6; const min=Math.min.apply(null,data); const max=Math.max.apply(null,data); const rng=Math.max(1e-9, max-min);
+      const step = (width - pad*2) / Math.max(1, data.length-1);
+      const points = data.map((v,i)=>{ const x = pad + i*step; const y = height - pad - ((v-min)/rng)*(height - pad*2); return `${x},${y}`; }).join(' ');
+      const pl = document.createElementNS('http://www.w3.org/2000/svg','polyline');
+      pl.setAttribute('fill','none'); pl.setAttribute('stroke','currentColor'); pl.setAttribute('stroke-width','2'); pl.setAttribute('points', points);
+      const c1 = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c1.setAttribute('r','3'); c1.setAttribute('cx', String(pad)); c1.setAttribute('cy', String(height - pad - ((data[0]-min)/rng)*(height-pad*2)));
+      const c2 = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c2.setAttribute('r','3'); c2.setAttribute('cx', String(pad + (data.length-1)*step)); c2.setAttribute('cy', String(height - pad - ((data[data.length-1]-min)/rng)*(height-pad*2)));
+      svg.appendChild(pl); svg.appendChild(c1); svg.appendChild(c2);
+    }
+
+    function render(){
+      // chips
+      roundsChip.textContent = state.rounds + ' flips';
+      { const winPct = Math.round((state.r - 1) * 100); const losePct = Math.round((1 - 1/state.r) * 100); rChip.textContent = 'win ×' + state.r.toFixed(2) + ' (' + winPct + '%)  lose ×' + (1/state.r).toFixed(2) + ' (' + losePct + '%)'; }
+      fChip.textContent = 'split ' + Math.round(state.f*100) + '/' + Math.round((1-state.f)*100);
+
+      // allocation visuals
+      allocAcoin.style.width = '100%';
+      allocAcash.style.width = '0%';
+      allocAlabel.textContent = '🪙 100%  |  💵 0%';
+      const coinPct = Math.round(state.f*100);
+      const cashPct = 100 - coinPct;
+      allocBcoin.style.width = coinPct + '%';
+      allocBcash.style.width = cashPct + '%';
+      allocBlabel.textContent = '🪙 ' + coinPct + '%  |  💵 ' + cashPct + '%';
+
+      // compute paths
+      const paths = simulate();
+      const last = a=> a.length? a[a.length-1] : 100;
+      valA.textContent = fmt(last(paths.jarA));
+      valB.textContent = fmt(last(paths.jarB));
+
+      // edge + info
+      const gUp = (1-state.f)+state.f*state.r; const gDn = (1-state.f)+state.f*(1/state.r);
+      const theoryLog = 0.5*Math.log(gUp) + 0.5*Math.log(gDn);
+      const theoryPct = (Math.exp(theoryLog)-1)*100;
+      edgeBadge.textContent = 'edge ' + theoryPct.toFixed(2) + '%/flip';
+      { const winPct = Math.round((state.r - 1) * 100); const losePct = Math.round((1 - 1/state.r) * 100); rInfo.textContent = 'win ×' + state.r.toFixed(2) + ' (' + winPct + '%)  |  lose ×' + (1/state.r).toFixed(2) + ' (' + losePct + '%)'; }
+      edgeBox.textContent = 'Average log growth = 0.5·ln(1−f+f·r) + 0.5·ln(1−f+f/r).';
+
+      // legend text for heads and tails colors
+      const legendEl = document.getElementById('legend');
+      if(legendEl){ legendEl.textContent = 'Heads = 🟡 win ×' + state.r.toFixed(2) + ' (' + Math.round((state.r-1)*100) + '%)  |  Tails = 🔵 lose ×' + (1/state.r).toFixed(2) + ' (' + Math.round((1-1/state.r)*100) + '%)'; }
+
+      // coins row
+      const arr = state.history.map(h=> h.coin==='H' ? '🟡' : '🔵');
+      const maxDots = Math.max(0, state.rounds - arr.length);
+      coins.innerHTML = arr.join('') + '<span class="dot">' + '⬜'.repeat(maxDots) + '</span>';
+
+      // table
+      rows.innerHTML = `<tr><td class="muted">0</td><td class="muted">.</td><td class="muted">.</td><td>$100.00</td><td>$100.00</td><td>$100.00</td></tr>`;
+      state.history.forEach((h,idx)=>{
+        rows.insertAdjacentHTML('beforeend', `<tr>
+          <td>${h.step}</td>
+          <td>${h.coin}</td>
+          <td>${h.mult.toFixed(3)}</td>
+          <td>$${(h.price).toLocaleString(undefined,{maximumFractionDigits:2})}</td>
+          <td>$${(paths.jarA[idx+1]).toLocaleString(undefined,{maximumFractionDigits:2})}</td>
+          <td>$${(paths.jarB[idx+1]).toLocaleString(undefined,{maximumFractionDigits:2})}</td>
+        </tr>`);
+      });
+
+      // sparklines
+      drawSpark(sRisky, paths.jarA);
+      drawSpark(sRebal, paths.jarB);
+
+      // buttons
+      btnFlip.disabled = state.history.length >= state.rounds || state.auto;
+      btnRun.textContent = state.auto ? 'Pause ⏸' : 'Play ▶';
+    }
+
+    function runTests(){
+      const ul = document.getElementById('tests');
+      ul.innerHTML = '';
+      function li(pass, text){ const el = document.createElement('li'); el.className = pass? 'pass' : 'fail'; el.textContent = (pass? 'PASS ' : 'FAIL ') + text; ul.appendChild(el); }
+      // Order invariance for one up and one down
+      (function(){ const f=0.5, r=1.5; const seq1=['H','T']; const seq2=['T','H']; function end(seq){ let w=100; for(const c of seq){ const g=(1-f)+f*(c==='H'?r:1/r); w*=g;} return w; } const expect = 100*((1-f)+f*r)*((1-f)+f*(1/r)); const a=end(seq1), b=end(seq2); li(Math.abs(a-expect)<1e-6 && Math.abs(b-expect)<1e-6, 'Jar B order invariance (1 up, 1 down)'); })();
+      // All in returns after up then down
+      (function(){ const r=1.5; const p = 100*r*(1/r); li(Math.abs(p-100)<1e-9,'Jar A returns to start after up then down');})();
+      // f zero keeps Jar B flat
+      (function(){ let w=100; const f=0, r=1.7; const seq=['H','T','H','T','H','T','H','T','H','T']; for(const c of seq){ const g=(1-f)+f*(c==='H'?r:1/r); w*=g;} li(Math.abs(w-100)<1e-9,'Jar B flat when f is zero');})();
+      // f one makes Jar B equal to Jar A
+      (function(){ const f=1, r=1.3; const seq=['H','H','T','T','H']; let w=100, risky=100; for(const c of seq){ risky *= (c==='H'?r:1/r); const g=(1-f)+f*(c==='H'?r:1/r); w*=g;} li(Math.abs(w-risky)<1e-9,'Jar B equals Jar A when f is one');})();
+      // positive edge at r 1.5 and f 0.5
+      (function(){ const f=0.5, r=1.5; const gUp=(1-f)+f*r, gDn=(1-f)+f*(1/r); const log=0.5*Math.log(gUp)+0.5*Math.log(gDn); li(log>0,'Edge positive at r 1.5 and f 0.5'); })();
+    }
+
+    // Hook up
+    elRounds.addEventListener('input', e=>{ state.rounds = Math.max(1, Math.min(1000, Number(e.target.value)||100)); render(); });
+    elR.addEventListener('input', e=>{ state.r = Number(e.target.value)||1.1; render(); });
+    elF.addEventListener('input', e=>{ state.f = Number(e.target.value)||0; render(); });
+
+    btnFlip.addEventListener('click', flipOnce);
+    btnRun.addEventListener('click', runFull);
+    btnClear.addEventListener('click', ()=>{ stopAuto(); state.history=[]; render(); });
+    btnShuffle.addEventListener('click', ()=>{ stopAuto(); state.seed = Math.floor(Math.random()*1e9); state.history=[]; resetRng(); render(); });
+
+    // init
+    resetRng();
+    render();
+    runTests();
+  </script></body>
+</html>
